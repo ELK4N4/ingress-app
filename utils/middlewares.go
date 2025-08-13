@@ -6,7 +6,7 @@ import (
 
 func LoggingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		Logger.LogInfo().Fields(map[string]any{
+		Logger.Info().Fields(map[string]any{
 			"method": c.Request().Method,
 			"uri":    c.Request().URL.Path,
 			"query":  c.Request().URL.RawQuery,
@@ -14,7 +14,7 @@ func LoggingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		err := next(c)
 		if err != nil {
-			Logger.LogError().Fields(map[string]any{
+			Logger.Error().Fields(map[string]any{
 				"error": err.Error(),
 			}).Msg("Response")
 			return err

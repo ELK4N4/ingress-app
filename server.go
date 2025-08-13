@@ -9,16 +9,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+func ping(c echo.Context) error {
+	return c.String(http.StatusOK, "pong")
 }
 
 func main() {
 	e := echo.New()
-
 	e.Use(utils.LoggingMiddleware)
+	if err := utils.ConnectMinio(); err != nil {
+		utils.Logger.Fatal().Fields(map[string]any{
+			"error": err.Error(),
+		}).Msg("Can't connect to MinIO")
+	}
 
-	e.GET("/", hello)
+	e.GET("/ping", ping)
 	routes.FilesRoutes(e)
 
 	e.Logger.Fatal(e.Start(":5000"))

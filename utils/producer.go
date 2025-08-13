@@ -20,7 +20,7 @@ func startProducer() {
 
 	producer, err := kafka.NewProducer(&configMap)
 	if err != nil {
-		Logger.LogError().Fields(map[string]any{
+		Logger.Error().Fields(map[string]any{
 			"error": err.Error(),
 		}).Msg("Error creating kafka producer")
 		return
@@ -31,7 +31,7 @@ func startProducer() {
 
 func SendMessage(msg []byte, topic string, key string) error {
 	if p == nil {
-		Logger.LogInfo().Msg("Initializing kafka producer")
+		Logger.Info().Msg("Initializing kafka producer")
 		startProducer()
 	}
 	delivery_chan := make(chan kafka.Event)
@@ -42,7 +42,7 @@ func SendMessage(msg []byte, topic string, key string) error {
 		Value:          []byte(msg), // Why are they creating the msg again instead of using a pointer?
 	}, delivery_chan)
 	if err != nil {
-		Logger.LogError().Fields(map[string]any{
+		Logger.Error().Fields(map[string]any{
 			"error": err.Error(),
 		}).Msg("Failed to produce message to kafka")
 		return err
@@ -50,12 +50,12 @@ func SendMessage(msg []byte, topic string, key string) error {
 	e := <-delivery_chan
 	m := e.(*kafka.Message)
 	if m.TopicPartition.Error != nil {
-		Logger.LogError().Fields(map[string]any{
+		Logger.Error().Fields(map[string]any{
 			"error": m.TopicPartition.Error.Error(),
 		}).Msg("Delivery failed")
 		return m.TopicPartition.Error
 	} else {
-		Logger.LogDebug().Msgf("Delivered message to topic %s [%d] at offset %v\n",
+		Logger.Debug().Msgf("Delivered message to topic %s [%d] at offset %v\n",
 			*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
 		return nil
 	}

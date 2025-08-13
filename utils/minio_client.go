@@ -10,7 +10,7 @@ import (
 
 var m *minio.Client = nil
 
-func connectMinio() error {
+func ConnectMinio() error {
 	endpoint := "localhost:9000"
 	accessKeyID := "minioadmin"
 	secretAccessKey := "minioadmin"
@@ -21,7 +21,7 @@ func connectMinio() error {
 		Secure: useSSL,
 	})
 	if err != nil {
-		Logger.LogError().Msg(err.Error())
+		Logger.Error().Msg(err.Error())
 		return err
 	}
 
@@ -31,8 +31,8 @@ func connectMinio() error {
 
 func GetMinioClient() *minio.Client {
 	if m == nil {
-		Logger.LogInfo().Msg("Initializing minio client")
-		connectMinio()
+		Logger.Info().Msg("Initializing minio client")
+		ConnectMinio()
 	}
 	return m
 }
@@ -44,14 +44,14 @@ func CreateBucket(bucketName string, location string) {
 	if err != nil {
 		exists, errBucketExists := client.BucketExists(ctx, bucketName)
 		if errBucketExists == nil && exists {
-			Logger.LogInfo().Msgf("Bucket %s already exist", bucketName)
+			Logger.Info().Msgf("Bucket %s already exist", bucketName)
 		} else {
-			Logger.LogError().Fields(map[string]any{
+			Logger.Error().Fields(map[string]any{
 				"error": err.Error(),
 			}).Msgf("Failed to create bucket %s", bucketName)
 		}
 	} else {
-		Logger.LogInfo().Msgf("Successfully created %s\n", bucketName)
+		Logger.Info().Msgf("Successfully created %s\n", bucketName)
 	}
 }
 
@@ -60,18 +60,18 @@ func AddFileToBucket(bucketName string, fileName string, fileSize int64, content
 	minioClient := GetMinioClient()
 	found, err := minioClient.BucketExists(ctx, bucketName)
 	if err != nil {
-		Logger.LogError().Err(err)
+		Logger.Error().Err(err)
 		return "", err
 	}
 	if !found {
-		Logger.LogInfo().Msgf("Creating bucket %s", bucketName)
+		Logger.Info().Msgf("Creating bucket %s", bucketName)
 		minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{})
 	}
 	info, err := minioClient.PutObject(ctx, bucketName, fileName, reader, fileSize, minio.PutObjectOptions{
 		ContentType: contentType,
 	})
 	if err != nil {
-		Logger.LogError().Fields(map[string]any{
+		Logger.Error().Fields(map[string]any{
 			"error": err.Error(),
 		}).Msgf("Failed to add file %s bucket %s", fileName, bucketName)
 		return "", err
