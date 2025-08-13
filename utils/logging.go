@@ -10,7 +10,7 @@ import (
 )
 
 type AppLogger struct {
-	zerolog.Logger
+	zerolog.Logger // Is it better to do emmbedding or private field?
 }
 
 var Logger *AppLogger
