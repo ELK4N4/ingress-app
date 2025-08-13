@@ -25,7 +25,7 @@ The server will accept requests at http://localhost:5000.
 The application has a single HTTP endpoint `/publish` that upload the file to MinIO and produce a message to Kafka.
 
 ### The Endpoint
-* Method: POST
+* Method: `POST`
 * URL: http://localhost:5000/publish
 * Body: A form-data payload that accepts a `file` as a key and the file itself as the value.
 
