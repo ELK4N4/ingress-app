@@ -52,7 +52,7 @@ func publish(c echo.Context) error {
 
 func FilesRoutes(e *echo.Echo) {
 	e.POST("/publish", publish)
-	e.GET("/:id", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Get user with ID: "+c.Param("id"))
+	e.GET("/:filename", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Get filename: "+c.Param("filename"))
 	})
 }
