@@ -19,6 +19,7 @@ type AnnounceHandler struct {
 
 func getContentType(reader multipart.File) (string, error) {
 	defer reader.Seek(0, io.SeekStart)
+	
 	buffer := make([]byte, 512)
 	if _, err := reader.Read(buffer); err != nil {
 		return "", err
