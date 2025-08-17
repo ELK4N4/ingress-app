@@ -9,11 +9,11 @@ type KafkaProducer struct {
 	p *kafka.Producer
 }
 
-func NewKafkaProducer() (*KafkaProducer, error) {
-	return &KafkaProducer{}, nil
+func NewKafkaProducer() *KafkaProducer {
+	return &KafkaProducer{}
 }
 
-func (kp *KafkaProducer) startProducer() {
+func (kp *KafkaProducer) Connect() error {
 	configMap := kafka.ConfigMap{
 		"bootstrap.servers":        "localhost:9092",
 		"go.delivery.reports":      true,
@@ -30,17 +30,14 @@ func (kp *KafkaProducer) startProducer() {
 		utils.Logger.Error().Fields(map[string]any{
 			"error": err.Error(),
 		}).Msg("Error creating kafka producer")
-		return
+		return err
 	}
 
 	kp.p = producer
+	return nil
 }
 
 func (kp *KafkaProducer) Publish(msg []byte, topic string, key string) error {
-	if kp.p == nil {
-		utils.Logger.Info().Msg("Initializing kafka producer")
-		kp.startProducer()
-	}
 	delivery_chan := make(chan kafka.Event)
 	defer close(delivery_chan)
 	err := kp.p.Produce(&kafka.Message{

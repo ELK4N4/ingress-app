@@ -18,6 +18,7 @@ func ping(c echo.Context) error {
 func main() {
 	e := echo.New()
 	e.Use(utils.LoggingMiddleware)
+
 	mos := object_storage.NewMinioObjectStorage("localhost:9000", "minioadmin", "minioadmin", false)
 	if err := mos.Connect(); err != nil {
 		utils.Logger.Fatal().Fields(map[string]any{
@@ -25,12 +26,18 @@ func main() {
 		}).Msg("Can't connect to MinIO")
 	}
 
-	p, _ := producer.NewKafkaProducer()
+	p := producer.NewKafkaProducer()
+	if err := p.Connect(); err != nil {
+		utils.Logger.Fatal().Fields(map[string]any{
+			"error": err.Error(),
+		}).Msg("Can't connect to Kafka")
+	}
+
 	ah := handlers.AnnounceHandler{
-		Producer:   p,
+		Producer:      p,
 		ObjectStorage: mos,
-		Topic:      "files",
-		BucketName: "files",
+		Topic:         "files",
+		BucketName:    "files",
 	}
 
 	e.GET("/ping", ping)
