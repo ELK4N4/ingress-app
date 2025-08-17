@@ -41,7 +41,9 @@ func (ah *AnnounceHandler) AnnounceFile(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	key, err := ah.ObjectStorage.UploadFile(ah.BucketName, file.Filename, file.Size, contentType, fileReader)
+
+	ctx := c.Request().Context() 
+	key, err := ah.ObjectStorage.UploadFile(ctx, ah.BucketName, file.Filename, file.Size, contentType, fileReader)
 	if err != nil {
 		return err
 	}

@@ -35,8 +35,7 @@ func (m *MinioObjectStorage) Connect() error {
 	return nil
 }
 
-func (m *MinioObjectStorage) UploadFile(bucketName string, fileName string, fileSize int64, contentType string, reader io.Reader) (string, error) {
-	ctx := context.Background()
+func (m *MinioObjectStorage) UploadFile(ctx context.Context, bucketName string, fileName string, fileSize int64, contentType string, reader io.Reader) (string, error) {
 	found, err := m.client.BucketExists(ctx, bucketName)
 	if err != nil {
 		utils.Logger.Error().Err(err)
