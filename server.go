@@ -35,8 +35,8 @@ func main() {
 
 	ah := handlers.AnnounceHandler{
 		Producer:      p,
-		ObjectStorage: mos,
 		Topic:         "files",
+		ObjectStorage: mos,
 		BucketName:    "files",
 	}
 

@@ -12,8 +12,8 @@ import (
 
 type AnnounceHandler struct {
 	Producer      producer.Producer
-	ObjectStorage object_storage.ObjectStorage
 	Topic         string
+	ObjectStorage object_storage.ObjectStorage
 	BucketName    string
 }
 
