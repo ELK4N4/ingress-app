@@ -1,4 +1,4 @@
-package utils
+package producer
 
 import (
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
