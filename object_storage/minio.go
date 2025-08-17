@@ -35,23 +35,6 @@ func (m *MinioObjectStorage) Connect() error {
 	return nil
 }
 
-func (m *MinioObjectStorage) CreateBucket(bucketName string, location string) {
-	ctx := context.Background()
-	err := m.client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
-	if err != nil {
-		exists, errBucketExists := m.client.BucketExists(ctx, bucketName)
-		if errBucketExists == nil && exists {
-			utils.Logger.Info().Msgf("Bucket %s already exist", bucketName)
-		} else {
-			utils.Logger.Error().Fields(map[string]any{
-				"error": err.Error(),
-			}).Msgf("Failed to create bucket %s", bucketName)
-		}
-	} else {
-		utils.Logger.Info().Msgf("Successfully created %s\n", bucketName)
-	}
-}
-
 func (m *MinioObjectStorage) UploadFile(bucketName string, fileName string, fileSize int64, contentType string, reader io.Reader) (string, error) {
 	ctx := context.Background()
 	found, err := m.client.BucketExists(ctx, bucketName)
