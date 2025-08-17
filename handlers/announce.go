@@ -5,15 +5,16 @@ import (
 	"mime/multipart"
 	"net/http"
 
+	"github.com/elk4n4/ingress-app/object_storage"
 	"github.com/elk4n4/ingress-app/producer"
-	"github.com/elk4n4/ingress-app/utils"
 	"github.com/labstack/echo/v4"
 )
 
 type AnnounceHandler struct {
-	Producer   producer.Producer
-	Topic      string
-	BucketName string
+	Producer      producer.Producer
+	ObjectStorage object_storage.ObjectStorage
+	Topic         string
+	BucketName    string
 }
 
 func getContentType(reader multipart.File) (string, error) {
@@ -39,7 +40,7 @@ func (ah *AnnounceHandler) AnnounceFile(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	key, err := utils.AddFileToBucket(ah.BucketName, file.Filename, file.Size, contentType, fileReader)
+	key, err := ah.ObjectStorage.UploadFile(ah.BucketName, file.Filename, file.Size, contentType, fileReader)
 	if err != nil {
 		return err
 	}
