@@ -46,6 +46,8 @@ The docker-compose.yml file also starts a MinIO server.
 ## TODO:
 * Using `viper` for configs
 * Create an image of the server
+* Create routes folder
+* Check for correct file structure
 * ~~Create ObjectStorage interface which minio_client implements~~
 * ~~Create Producer interface which kafka_producer implements~~
 * ~~Create AnnounceHandler using:~~
