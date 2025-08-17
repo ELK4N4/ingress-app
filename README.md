@@ -46,8 +46,8 @@ The docker-compose.yml file also starts a MinIO server.
 ## TODO:
 * Using `viper` for configs
 * Create an image of the server
-* Create ObjectStorage interface which minio_client implements
-* Create Producer interface which kafka_producer implements
-* Create AnnounceHandler using:
-  * ObjectStorage to upload the files
-  * Producer to announce the topic for a new file that was uploaded to the object storage
+* ~~Create ObjectStorage interface which minio_client implements~~
+* ~~Create Producer interface which kafka_producer implements~~
+* ~~Create AnnounceHandler using:~~
+  * ~~ObjectStorage to upload the files~~
+  * ~~Producer to announce the topic for a new file that was uploaded to the object storage~~
