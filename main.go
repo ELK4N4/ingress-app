@@ -26,7 +26,7 @@ func main() {
 		}).Msg("Can't connect to MinIO")
 	}
 
-	p := producer.NewKafkaProducer()
+	p := producer.NewKafkaProducer("localhost:9092", 5)
 	if err := p.Connect(); err != nil {
 		utils.Logger.Fatal().Fields(map[string]any{
 			"error": err.Error(),

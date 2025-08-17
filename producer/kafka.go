@@ -6,21 +6,23 @@ import (
 )
 
 type KafkaProducer struct {
-	p *kafka.Producer
+	p       *kafka.Producer
+	servers string
+	retries int
 }
 
-func NewKafkaProducer() *KafkaProducer {
-	return &KafkaProducer{}
+func NewKafkaProducer(servers string, retries int) *KafkaProducer {
+	return &KafkaProducer{servers: servers, retries: retries}
 }
 
 func (kp *KafkaProducer) Connect() error {
 	configMap := kafka.ConfigMap{
-		"bootstrap.servers":        "localhost:9092",
+		"bootstrap.servers":        kp.servers,
 		"go.delivery.reports":      true,
 		"enable.auto.commit":       true,
 		"go.logs.channel.enable":   true,
 		"allow.auto.create.topics": true,
-		"retries":                  5,
+		"retries":                  kp.retries,
 		"delivery.timeout.ms":      30000,
 		"retry.backoff.ms":         1000,
 	}
