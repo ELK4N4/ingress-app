@@ -3,7 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/elk4n4/ingress-app/routes"
+	"github.com/elk4n4/ingress-app/handlers"
+	"github.com/elk4n4/ingress-app/producer"
 	"github.com/elk4n4/ingress-app/utils"
 
 	"github.com/labstack/echo/v4"
@@ -22,8 +23,15 @@ func main() {
 		}).Msg("Can't connect to MinIO")
 	}
 
+	p, _ := producer.NewKafkaProducer()
+	ah := handlers.AnnounceHandler{
+		Producer:   p,
+		Topic:      "files",
+		BucketName: "files",
+	}
+
 	e.GET("/ping", ping)
-	routes.FilesRoutes(e)
+	e.POST("/publish", ah.AnnounceFile)
 
 	e.Logger.Fatal(e.Start(":5000"))
 }

@@ -1,18 +1,19 @@
-package routes
+package handlers
 
 import (
 	"io"
 	"mime/multipart"
 	"net/http"
 
+	"github.com/elk4n4/ingress-app/producer"
 	"github.com/elk4n4/ingress-app/utils"
 	"github.com/labstack/echo/v4"
 )
 
-func announceFile(filename string) error {
-	topic := "files"
-	err := utils.SendMessage([]byte(filename), topic, filename)
-	return err
+type AnnounceHandler struct {
+	Producer   producer.Producer
+	Topic      string
+	BucketName string
 }
 
 func getContentType(reader multipart.File) (string, error) {
@@ -24,7 +25,7 @@ func getContentType(reader multipart.File) (string, error) {
 	return http.DetectContentType(buffer), nil
 }
 
-func publish(c echo.Context) error {
+func (ah *AnnounceHandler) AnnounceFile(c echo.Context) error {
 	file, err := c.FormFile("file")
 	if err != nil {
 		return err
@@ -38,21 +39,13 @@ func publish(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	bucketName := "files"
-	key, err := utils.AddFileToBucket(bucketName, file.Filename, file.Size, contentType, fileReader)
+	key, err := utils.AddFileToBucket(ah.BucketName, file.Filename, file.Size, contentType, fileReader)
 	if err != nil {
 		return err
 	}
 
-	if err := announceFile(key); err != nil {
+	if err := ah.Producer.Publish([]byte(key), ah.Topic, key); err != nil {
 		return err
 	}
 	return c.String(http.StatusOK, "Published")
-}
-
-func FilesRoutes(e *echo.Echo) {
-	e.POST("/publish", publish)
-	e.GET("/:filename", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Get filename: "+c.Param("filename"))
-	})
 }
