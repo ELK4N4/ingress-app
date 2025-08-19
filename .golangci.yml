@@ -1,0 +1,95 @@
+# golangci-lint configuration file
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  skip-dirs:
+    - vendor
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gocyclo
+    - gofmt
+    - goimports
+    - misspell
+    - gocritic
+    - gosec
+    - unconvert
+    - dupl
+    - goconst
+    - gocognit
+  disable:
+    - typecheck  # disabled because of potential issues with test mocks
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  
+  gocyclo:
+    min-complexity: 15
+  
+  gocognit:
+    min-complexity: 20
+  
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+      - experimental
+    disabled-checks:
+      - commentFormatting
+  
+  gosec:
+    severity: medium
+    confidence: medium
+  
+  misspell:
+    locale: US
+  
+  dupl:
+    threshold: 100
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - goconst
+    
+    # Exclude gosec from test files for G404 (weak random generator)
+    - path: _test\.go
+      text: "G404:"
+      linters:
+        - gosec
+    
+    # Allow long lines in tests
+    - path: _test\.go
+      linters:
+        - lll
+  
+  # Show only new issues created in git patch
+  new: false
+  
+  # Maximum issues count per one linter
+  max-issues-per-linter: 50
+  
+  # Maximum count of issues with the same text
+  max-same-issues: 3
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
